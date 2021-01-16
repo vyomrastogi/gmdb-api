@@ -1,24 +1,24 @@
 package com.gmdb.controller;
 
-import java.util.ArrayList;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmdb.response.GmdbBaseResponse;
-import com.gmdb.response.MovieTitlesResponse;
+import com.gmdb.service.GmdbService;
 
 @RestController
 @RequestMapping("/api")
 public class GmdbController {
 
+	GmdbService service;
+
+	public GmdbController(GmdbService service) {
+		this.service = service;
+	}
+
 	@GetMapping("/movies")
 	public GmdbBaseResponse getMovieTitles() {
-		GmdbBaseResponse response = new GmdbBaseResponse();
-		MovieTitlesResponse internalResponse = new MovieTitlesResponse();
-		internalResponse.setMovieTitles(new ArrayList<>());
-		response.setData(internalResponse);
-		return response;
+		return new GmdbBaseResponse(service.getMovieTitles());
 	}
 }
