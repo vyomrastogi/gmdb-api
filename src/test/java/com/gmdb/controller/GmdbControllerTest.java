@@ -8,7 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 
+import com.gmdb.model.Movie;
+import com.gmdb.response.MovieDetailResponse;
+import com.gmdb.util.TestHelper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,4 +55,23 @@ public class GmdbControllerTest {
 		verify(service).getMovieTitles();
 	}
 
+	@Test
+	public void testGetMovieDetail_ReturnsMovieDetail() throws Exception {
+
+		Movie expectedMovie = TestHelper.movieContent();
+
+		when(service.getMovieDetail(Mockito.anyString())).thenReturn(MovieDetailResponse.builder()
+				.movieDetail(TestHelper.movieContent()).build());
+		mockMvc.perform(get("/api/movies/{title}","Avatar")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.movieDetail").exists())
+				.andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
+				.andExpect(jsonPath("$.data.movieDetail.director").value(expectedMovie.getDirector()))
+				.andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
+				.andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
+				.andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
+				.andExpect(jsonPath("$.data.movieDetail.rating").value(expectedMovie.getRating()))
+				.andExpect(jsonPath("$.errorMessages").isEmpty());
+
+		verify(service).getMovieDetail(Mockito.anyString());
+	}
 }

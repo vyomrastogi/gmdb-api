@@ -1,6 +1,7 @@
 package com.gmdb.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,10 @@ public class GmdbController {
 	@GetMapping("/movies")
 	public GmdbBaseResponse getMovieTitles() {
 		return new GmdbBaseResponse(service.getMovieTitles());
+	}
+
+	@GetMapping("/movies/{title}")
+	public GmdbBaseResponse getMovieDetail(@PathVariable String title) {
+		return new GmdbBaseResponse(service.getMovieDetail(title));
 	}
 }
