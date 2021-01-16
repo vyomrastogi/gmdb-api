@@ -1,16 +1,13 @@
 package com.gmdb.controller;
 
-import com.gmdb.exception.MovieNotFoundException;
-import com.gmdb.model.Movie;
-import com.gmdb.model.MovieReview;
-import com.gmdb.repository.GmdbRepository;
-import com.gmdb.repository.GmdbReviewRepository;
-import com.gmdb.response.MovieDetail;
-import com.gmdb.response.MovieDetailResponse;
-import com.gmdb.response.Review;
-import com.gmdb.util.TestHelper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,14 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.transaction.Transactional;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.gmdb.model.Movie;
+import com.gmdb.model.MovieReview;
+import com.gmdb.repository.GmdbRepository;
+import com.gmdb.repository.GmdbReviewRepository;
+import com.gmdb.response.MovieDetail;
+import com.gmdb.util.TestHelper;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -123,7 +118,6 @@ public class GmdbControllerIntTest {
 				.andExpect(jsonPath("$.data.movieDetail.rating").value(5.0))
 				.andExpect(jsonPath("$.data.movieDetail.reviews.length()").value(2))
 				.andExpect(jsonPath("$.errorMessages").isEmpty());
-
 	}
 
 }

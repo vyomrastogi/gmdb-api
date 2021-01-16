@@ -37,6 +37,18 @@ public class TestHelper {
         
     }
     
+    public static MovieDetail movieDetailContentWithMultipleReview(){
+        MovieDetail detail =  new MovieDetail(movieContent());
+        
+        List<Review> reviews = new ArrayList<>();
+        reviews.add(Review.builder().rating(5).build());
+        reviews.add(Review.builder().rating(3).build());
+        detail.setRating(4.0);
+        detail.setReviews(reviews);
+        return detail;
+        
+    }
+    
     public static List<MovieReview> movieReviews(){
     	List<MovieReview> reviews = new ArrayList<>();
     	reviews.add(MovieReview.builder().rating(5).build());
