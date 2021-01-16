@@ -1,7 +1,14 @@
 package com.gmdb.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmdb.model.Movie;
+import com.gmdb.model.MovieReview;
 import com.gmdb.response.MovieDetail;
+import com.gmdb.response.Review;
 
 public class TestHelper {
 
@@ -13,8 +20,38 @@ public class TestHelper {
                 .build();
     }
     
-    public static MovieDetail movieDetailContent(){
+    public static MovieDetail movieDetailContentWithoutRating(){       
         return new MovieDetail(movieContent());
+        
     }
     
+    public static MovieDetail movieDetailContent(){
+        MovieDetail detail =  new MovieDetail(movieContent());
+        
+        List<Review> reviews = new ArrayList<>();
+        reviews.add(Review.builder().rating(5).build());
+        
+        detail.setRating(5.0);
+        detail.setReviews(reviews);
+        return detail;
+        
+    }
+    
+    public static List<MovieReview> movieReviews(){
+    	List<MovieReview> reviews = new ArrayList<>();
+    	reviews.add(MovieReview.builder().rating(5).build());
+    	reviews.add(MovieReview.builder().rating(3).build());
+    	return reviews;
+    }
+    
+    public static List<MovieReview> movieReview(){
+    	List<MovieReview> reviews = new ArrayList<>();
+    	reviews.add(MovieReview.builder().rating(5).build());
+    	return reviews;
+    }
+    
+    public static String reviewContent() throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	return mapper.writeValueAsString(Review.builder().rating(5).build());
+    }
 }

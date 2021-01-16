@@ -17,7 +17,7 @@ public class MovieDetail {
 	private String actors;
 	private String releaseYear;
 	private String description;
-	private Integer rating;
+	private Double rating;
 	private List<Review> reviews = new ArrayList<>();
 	
 	public MovieDetail(Movie movie) {
@@ -28,9 +28,11 @@ public class MovieDetail {
 		this.actors = movie.getActors();
 	}
 
-	public MovieDetail(Movie movie, Review review) {
+	public MovieDetail(Movie movie,Double rating, List<Review> reviews) {
 		this(movie);
-		this.reviews.add(review);
-		this.rating = review.getRating();
+		String str = String.format("%1.1f", rating);
+		this.rating = Double.valueOf(str);
+		this.reviews = reviews;
+		
 	}
 }

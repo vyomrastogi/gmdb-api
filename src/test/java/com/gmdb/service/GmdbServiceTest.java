@@ -89,8 +89,10 @@ public class GmdbServiceTest {
 	@Test
 	public void testAddMovieReview_withOnlyRating() throws MovieNotFoundException {
 		
+		
 		when(reviewRepository.save(Mockito.any(MovieReview.class))).thenReturn(new MovieReview());
 		when(movieRepository.findById("Avatar")).thenReturn(Optional.of(TestHelper.movieContent()));
+		when(reviewRepository.findAllByTitle(Mockito.anyString())).thenReturn(TestHelper.movieReview());
 		
 		MovieDetailResponse actualResponse = service.addMovieReview("Avatar",Review.builder().rating(5).build());
 		
@@ -100,11 +102,36 @@ public class GmdbServiceTest {
 				.extracting("title", "director", "actors", "releaseYear", "description", "rating")
 				.containsExactly("Avatar", "James Cameron", "Sam Worthington, Zoe Salanada, Stephen Lang", "2009",
 						"A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
-						5);
+						5.0);
 		assertThat(actualResponse.getMovieDetail().getReviews()).hasSize(1);
 		
 		verify(reviewRepository).save(Mockito.any(MovieReview.class));
 		verify(movieRepository).findById("Avatar");
+		verify(reviewRepository).findAllByTitle(Mockito.anyString());
 	}
+	
+	@Test
+	public void testAddMovieReview_withOnlyRating_andRatingExists() throws MovieNotFoundException {
+		
+		when(reviewRepository.save(Mockito.any(MovieReview.class))).thenReturn(new MovieReview());
+		when(movieRepository.findById("Avatar")).thenReturn(Optional.of(TestHelper.movieContent()));
+		when(reviewRepository.findAllByTitle(Mockito.anyString())).thenReturn(TestHelper.movieReviews());
+		
+		MovieDetailResponse actualResponse = service.addMovieReview("Avatar",Review.builder().rating(5).build());
+		
+		assertNotNull(actualResponse);		
+
+		assertThat(actualResponse.getMovieDetail())
+				.extracting("title", "director", "actors", "releaseYear", "description", "rating")
+				.containsExactly("Avatar", "James Cameron", "Sam Worthington, Zoe Salanada, Stephen Lang", "2009",
+						"A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
+						4.0);
+		assertThat(actualResponse.getMovieDetail().getReviews()).hasSize(2);
+		
+		verify(reviewRepository).save(Mockito.any(MovieReview.class));
+		verify(movieRepository).findById("Avatar");
+		verify(reviewRepository).findAllByTitle(Mockito.anyString());
+	}
+	
 
 }

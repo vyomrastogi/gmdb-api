@@ -1,5 +1,6 @@
 package com.gmdb.service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.gmdb.exception.MovieNotFoundException;
@@ -44,7 +45,9 @@ public class GmdbService {
 	public MovieDetailResponse addMovieReview(String title, Review review) throws MovieNotFoundException {
 		Movie movie = repository.findById(title).orElseThrow(()->new MovieNotFoundException(title));
 		MovieReview savedReview = reviewRepository.save(new MovieReview(title, review));
-		
-		return MovieDetailResponse.builder().movieDetail(new MovieDetail(movie,review)).build();
+		List<MovieReview> reviews = reviewRepository.findAllByTitle(title);
+		Double rating = reviews.stream().mapToInt(MovieReview::getRating).average().getAsDouble();
+		List<Review> savedReviews = reviews.stream().map(Review::new).collect(Collectors.toList());
+		return MovieDetailResponse.builder().movieDetail(new MovieDetail(movie,rating,savedReviews)).build();
 	}
 }
