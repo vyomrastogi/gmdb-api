@@ -31,7 +31,8 @@ public class GmdbControllerTest {
 		when(service.getMovieTitles()).thenReturn(MovieTitlesResponse.builder().build());
 
 		mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.movieTitles").isEmpty());
+		.andExpect(jsonPath("$.data.movieTitles").isEmpty())
+		.andExpect(jsonPath("$.errorMessages").isEmpty());
 
 		verify(service).getMovieTitles();
 	}
@@ -44,7 +45,8 @@ public class GmdbControllerTest {
 				.build());
 
 		mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.movieTitles.length()").value(3));
+				.andExpect(jsonPath("$.data.movieTitles.length()").value(3))
+				.andExpect(jsonPath("$.errorMessages").isEmpty());
 
 		verify(service).getMovieTitles();
 	}
