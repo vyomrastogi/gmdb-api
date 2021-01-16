@@ -2,6 +2,7 @@ package com.gmdb.controller;
 
 import com.gmdb.model.Movie;
 import com.gmdb.repository.GmdbRepository;
+import com.gmdb.util.TestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -39,6 +40,22 @@ public class GmdbControllerIntTest {
         repository.save(new Movie("Batman"));
         mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.movieTitles.length()").value(1))
+                .andExpect(jsonPath("$.errorMessages").isEmpty());
+    }
+
+    @Test
+    public void testGetMovieDetail_ReturnsMovieDetail() throws Exception {
+        Movie expectedMovie = TestHelper.movieContent();
+        repository.save(expectedMovie);
+
+        mockMvc.perform(get("/api/movies/{title}","Avatar")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.movieDetail").exists())
+                .andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
+                .andExpect(jsonPath("$.data.movieDetail.director").value(expectedMovie.getDirector()))
+                .andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
+                .andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
+                .andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
+                .andExpect(jsonPath("$.data.movieDetail.rating").value(expectedMovie.getRating()))
                 .andExpect(jsonPath("$.errorMessages").isEmpty());
     }
 
