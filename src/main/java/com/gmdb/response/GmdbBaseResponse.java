@@ -20,4 +20,7 @@ public class GmdbBaseResponse {
 		this.data = data;
 	}
 
+	public void appendErrorMessage(String message) {
+		errorMessages.add(message);
+	}
 }

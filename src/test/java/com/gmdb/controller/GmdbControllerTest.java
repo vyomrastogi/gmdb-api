@@ -1,5 +1,7 @@
 package com.gmdb.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.Optional;
 
+import com.gmdb.exception.MovieNotFoundException;
 import com.gmdb.model.Movie;
 import com.gmdb.response.MovieDetailResponse;
 import com.gmdb.util.TestHelper;
@@ -73,5 +77,18 @@ public class GmdbControllerTest {
 				.andExpect(jsonPath("$.errorMessages").isEmpty());
 
 		verify(service).getMovieDetail(Mockito.anyString());
+	}
+
+	@Test
+	public void testGetMovieDetails_ReturnsMovieNotFound() throws Exception {
+		when(service.getMovieDetail("Dummy")).thenThrow(new MovieNotFoundException("Dummy"));
+
+		mockMvc.perform(get("/api/movies/{title}","Dummy"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errorMessages.length()").value(1))
+				.andExpect(jsonPath("$.errorMessages[0]").value("Movie - {Dummy} not found"));
+
+		verify(service).getMovieDetail("Dummy");
 	}
 }

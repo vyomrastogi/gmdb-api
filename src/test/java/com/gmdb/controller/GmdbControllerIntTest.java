@@ -1,5 +1,6 @@
 package com.gmdb.controller;
 
+import com.gmdb.exception.MovieNotFoundException;
 import com.gmdb.model.Movie;
 import com.gmdb.repository.GmdbRepository;
 import com.gmdb.util.TestHelper;
@@ -12,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,6 +60,15 @@ public class GmdbControllerIntTest {
                 .andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
                 .andExpect(jsonPath("$.data.movieDetail.rating").value(expectedMovie.getRating()))
                 .andExpect(jsonPath("$.errorMessages").isEmpty());
+    }
+
+    @Test
+    public void testGetMovieDetails_ReturnsMovieNotFound() throws Exception {
+        mockMvc.perform(get("/api/movies/{title}","Dummy"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.errorMessages.length()").value(1))
+                .andExpect(jsonPath("$.errorMessages[0]").value("Movie - {Dummy} not found"));
     }
 
 }

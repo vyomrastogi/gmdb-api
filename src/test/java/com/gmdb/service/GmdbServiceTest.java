@@ -1,7 +1,7 @@
 package com.gmdb.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.gmdb.exception.MovieNotFoundException;
 import com.gmdb.response.MovieDetailResponse;
 import com.gmdb.util.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,7 @@ public class GmdbServiceTest {
 	}
 
 	@Test
-	public void testGetMovieDetails_ReturnsMovieDetailResponse() {
+	public void testGetMovieDetails_ReturnsMovieDetailResponse() throws MovieNotFoundException {
 		when(repository.findById("Avatar")).thenReturn(Optional.of(TestHelper.movieContent()));
 		MovieDetailResponse actualResponse = service.getMovieDetail("Avatar");
 		assertNotNull(actualResponse);
@@ -68,6 +69,14 @@ public class GmdbServiceTest {
 				,null);
 
 		verify(repository).findById("Avatar");
+	}
+
+	@Test
+	public void testGetMovieDetails_ReturnsMovieNotFound() {
+		when(repository.findById("Dummy")).thenReturn(Optional.empty());
+		MovieNotFoundException movieNotFoundException = assertThrows(MovieNotFoundException.class, () -> service.getMovieDetail("Dummy"));
+		assertEquals("Movie - {Dummy} not found", movieNotFoundException.getMessage());
+		verify(repository).findById("Dummy");
 	}
 
 

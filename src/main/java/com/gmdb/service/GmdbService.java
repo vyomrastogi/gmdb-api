@@ -2,6 +2,7 @@ package com.gmdb.service;
 
 import java.util.stream.Collectors;
 
+import com.gmdb.exception.MovieNotFoundException;
 import com.gmdb.response.MovieDetailResponse;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +29,9 @@ public class GmdbService {
 				.build();
 	}
 
-    public MovieDetailResponse getMovieDetail(String movieTitle) {
+    public MovieDetailResponse getMovieDetail(String movieTitle) throws MovieNotFoundException {
 		return MovieDetailResponse.builder()
-				.movieDetail(repository.findById(movieTitle).get()).build();
+				.movieDetail(repository.findById(movieTitle)
+						.orElseThrow(()->new MovieNotFoundException(movieTitle))).build();
     }
 }
