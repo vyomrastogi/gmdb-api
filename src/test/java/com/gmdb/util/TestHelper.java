@@ -66,4 +66,14 @@ public class TestHelper {
     	ObjectMapper mapper = new ObjectMapper();
     	return mapper.writeValueAsString(Review.builder().rating(5).build());
     }
+    
+    public static String invalidReviewContent() throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	return mapper.writeValueAsString(Review.builder().review("movie is awesome").build());
+    }
+    
+    public static String invalidReviewContent2() throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+    	return mapper.writeValueAsString(Review.builder().rating(-1).review("movie is awesome").build());
+    }
 }
