@@ -6,8 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,16 +26,10 @@ public class GmdbControllerTest {
 
 	@Test
 	public void testGetMovieTitles_ReturnsEmptyList() throws Exception {
+		when(service.getMovieTitles()).thenReturn(MovieTitlesResponse.builder().build());
 
-		MovieTitlesResponse internalResponse = new MovieTitlesResponse();
-		internalResponse.setMovieTitles(new ArrayList<>());
-
-		when(service.getMovieTitles()).thenReturn(internalResponse);
-
-		mockMvc.perform(
-				get("/api/movies"))
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data.movieTitles").isEmpty());
+		mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.movieTitles").isEmpty());
 
 		verify(service).getMovieTitles();
 	}
