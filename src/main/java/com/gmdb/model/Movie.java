@@ -20,7 +20,6 @@ public class Movie {
 	private String actors;
 	private String releaseYear;
 	private String description;
-	private Double rating;
 
 	public Movie() {
 

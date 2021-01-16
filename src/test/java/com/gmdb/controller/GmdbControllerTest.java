@@ -1,7 +1,5 @@
 package com.gmdb.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,12 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import com.gmdb.exception.MovieNotFoundException;
-import com.gmdb.model.Movie;
-import com.gmdb.response.MovieDetailResponse;
-import com.gmdb.util.TestHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +15,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.gmdb.exception.MovieNotFoundException;
+import com.gmdb.model.Movie;
+import com.gmdb.response.MovieDetailResponse;
 import com.gmdb.response.MovieTitlesResponse;
 import com.gmdb.service.GmdbService;
+import com.gmdb.util.TestHelper;
 
 @WebMvcTest
 public class GmdbControllerTest {
@@ -65,7 +62,7 @@ public class GmdbControllerTest {
 		Movie expectedMovie = TestHelper.movieContent();
 
 		when(service.getMovieDetail(Mockito.anyString())).thenReturn(MovieDetailResponse.builder()
-				.movieDetail(TestHelper.movieContent()).build());
+				.movieDetail(TestHelper.movieDetailContent()).build());
 		mockMvc.perform(get("/api/movies/{title}","Avatar")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.movieDetail").exists())
 				.andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
@@ -73,7 +70,7 @@ public class GmdbControllerTest {
 				.andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
 				.andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
 				.andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
-				.andExpect(jsonPath("$.data.movieDetail.rating").value(expectedMovie.getRating()))
+				.andExpect(jsonPath("$.data.movieDetail.rating").isEmpty())
 				.andExpect(jsonPath("$.errorMessages").isEmpty());
 
 		verify(service).getMovieDetail(Mockito.anyString());

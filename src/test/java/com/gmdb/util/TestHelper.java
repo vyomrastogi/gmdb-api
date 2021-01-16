@@ -1,6 +1,7 @@
 package com.gmdb.util;
 
 import com.gmdb.model.Movie;
+import com.gmdb.response.MovieDetail;
 
 public class TestHelper {
 
@@ -11,4 +12,9 @@ public class TestHelper {
                         "between following his orders and protecting the world he feels is his home.")
                 .build();
     }
+    
+    public static MovieDetail movieDetailContent(){
+        return new MovieDetail(movieContent());
+    }
+    
 }

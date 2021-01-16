@@ -58,7 +58,7 @@ public class GmdbControllerIntTest {
                 .andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
                 .andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
                 .andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
-                .andExpect(jsonPath("$.data.movieDetail.rating").value(expectedMovie.getRating()))
+                .andExpect(jsonPath("$.data.movieDetail.rating").isEmpty())
                 .andExpect(jsonPath("$.errorMessages").isEmpty());
     }
 

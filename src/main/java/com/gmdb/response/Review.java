@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class MovieDetailResponse {    
+public class Review {
+	private Integer rating;
+	private String review;
 
-	private MovieDetail movieDetail;	
-	
 }
