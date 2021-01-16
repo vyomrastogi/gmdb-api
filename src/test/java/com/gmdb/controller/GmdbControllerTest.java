@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +32,19 @@ public class GmdbControllerTest {
 
 		mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.movieTitles").isEmpty());
+
+		verify(service).getMovieTitles();
+	}
+	
+	@Test
+	public void testGetMovieTitles_ReturnsNonEmptyList() throws Exception {
+		
+		when(service.getMovieTitles()).thenReturn(MovieTitlesResponse.builder()
+				.movieTitles(Arrays.asList("Avengers","Avatar","Wonder Woman 1984"))
+				.build());
+
+		mockMvc.perform(get("/api/movies")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.movieTitles.length()").value(3));
 
 		verify(service).getMovieTitles();
 	}
