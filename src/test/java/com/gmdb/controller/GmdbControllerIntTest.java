@@ -2,7 +2,9 @@ package com.gmdb.controller;
 
 import com.gmdb.exception.MovieNotFoundException;
 import com.gmdb.model.Movie;
+import com.gmdb.model.MovieReview;
 import com.gmdb.repository.GmdbRepository;
+import com.gmdb.repository.GmdbReviewRepository;
 import com.gmdb.response.MovieDetail;
 import com.gmdb.response.MovieDetailResponse;
 import com.gmdb.response.Review;
@@ -36,6 +38,9 @@ public class GmdbControllerIntTest {
 
     @Autowired
     private GmdbRepository repository;
+    
+    @Autowired
+    private GmdbReviewRepository GmdbReviewRepository;
 
     @Test
     public void testGetMovieTitles_ReturnsEmptyList() throws Exception {
@@ -92,8 +97,31 @@ public class GmdbControllerIntTest {
 				.andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
 				.andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
 				.andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
-				.andExpect(jsonPath("$.data.movieDetail.rating").value(5))
+				.andExpect(jsonPath("$.data.movieDetail.rating").value(5.0))
 				.andExpect(jsonPath("$.data.movieDetail.reviews.length()").value(1))
+				.andExpect(jsonPath("$.errorMessages").isEmpty());
+
+	}
+    
+    @Test
+	public void testAddReviewWithTextAndMultipleReviews() throws Exception {
+		
+		MovieDetail expectedMovie = TestHelper.movieDetailContent();
+		Movie expectedMovieContent = TestHelper.movieContent();
+	        repository.save(expectedMovieContent);
+	    
+	    GmdbReviewRepository.save(MovieReview.builder().title("Avatar").rating(5).review("Review text").build());
+		
+		mockMvc.perform(post("/api/movies/{title}/review","Avatar").content(TestHelper.reviewContent()).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data").exists())
+				.andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
+				.andExpect(jsonPath("$.data.movieDetail.director").value(expectedMovie.getDirector()))
+				.andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
+				.andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
+				.andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
+				.andExpect(jsonPath("$.data.movieDetail.rating").value(5.0))
+				.andExpect(jsonPath("$.data.movieDetail.reviews.length()").value(2))
 				.andExpect(jsonPath("$.errorMessages").isEmpty());
 
 	}
