@@ -28,26 +28,32 @@ public class GmdbService {
 
 	public MovieTitlesResponse getMovieTitles() {
 		return MovieTitlesResponse.builder()
-				.movieTitles(
-						repository.findAll()
-						.stream()
-						.map(Movie::getTitle)
-						.collect(Collectors.toList()))
-				.build();
+				.movieTitles(repository.findAll().stream().map(Movie::getTitle).collect(Collectors.toList())).build();
 	}
 
-    public MovieDetailResponse getMovieDetail(String movieTitle) throws MovieNotFoundException {
-		return MovieDetailResponse.builder()
-				.movieDetail(repository.findById(movieTitle).map(MovieDetail::new)
-						.orElseThrow(()->new MovieNotFoundException(movieTitle))).build();
-    }
+	public MovieDetailResponse getMovieDetail(String movieTitle) throws MovieNotFoundException {
+		Movie movie = getMovieByTitle(movieTitle);
+		return MovieDetailResponse.builder().movieDetail(new MovieDetail(movie)).build();
+	}
 
+	/**
+	 * Adds given review to movie title and returns movie detail with average rating and all review contributions
+	 * 
+	 * @param title
+	 * @param review
+	 * @return
+	 * @throws MovieNotFoundException
+	 */
 	public MovieDetailResponse addMovieReview(String title, Review review) throws MovieNotFoundException {
-		Movie movie = repository.findById(title).orElseThrow(()->new MovieNotFoundException(title));
+		Movie movie = getMovieByTitle(title);
 		MovieReview savedReview = reviewRepository.save(new MovieReview(title, review));
 		List<MovieReview> reviews = reviewRepository.findAllByTitle(title);
 		Double rating = reviews.stream().mapToInt(MovieReview::getRating).average().getAsDouble();
 		List<Review> savedReviews = reviews.stream().map(Review::new).collect(Collectors.toList());
-		return MovieDetailResponse.builder().movieDetail(new MovieDetail(movie,rating,savedReviews)).build();
+		return MovieDetailResponse.builder().movieDetail(new MovieDetail(movie, rating, savedReviews)).build();
+	}
+
+	private Movie getMovieByTitle(String title) throws MovieNotFoundException {
+		return repository.findById(title).orElseThrow(() -> new MovieNotFoundException(title));
 	}
 }

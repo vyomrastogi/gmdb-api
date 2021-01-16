@@ -95,12 +95,13 @@ public class GmdbControllerTest {
 	
 	@Test
 	public void testAddReview() throws Exception {
-		
-		MovieDetail expectedMovie = TestHelper.movieDetailContent();
-		when(service.addMovieReview(Mockito.anyString(), Mockito.any(Review.class))).thenReturn(MovieDetailResponse.builder().movieDetail(expectedMovie).build());
 
-		mockMvc.perform(post("/api/movies/{title}/review","Avatar").content(TestHelper.reviewContent()).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+		MovieDetail expectedMovie = TestHelper.movieDetailContent();
+		when(service.addMovieReview(Mockito.anyString(), Mockito.any(Review.class)))
+				.thenReturn(MovieDetailResponse.builder().movieDetail(expectedMovie).build());
+
+		mockMvc.perform(post("/api/movies/{title}/review", "Avatar").content(TestHelper.reviewContent())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.data").exists())
 				.andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
 				.andExpect(jsonPath("$.data.movieDetail.director").value(expectedMovie.getDirector()))
@@ -114,4 +115,40 @@ public class GmdbControllerTest {
 		verify(service).addMovieReview(Mockito.anyString(), Mockito.any(Review.class));
 	}
 	
+	
+	@Test
+	public void testAddReviewWithTextAndMultipleReviews() throws Exception {
+
+		MovieDetail expectedMovie = TestHelper.movieDetailContentWithMultipleReview();
+		when(service.addMovieReview(Mockito.anyString(), Mockito.any(Review.class)))
+				.thenReturn(MovieDetailResponse.builder().movieDetail(expectedMovie).build());
+
+		mockMvc.perform(post("/api/movies/{title}/review", "Avatar").content(TestHelper.reviewContent())
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.data").exists())
+				.andExpect(jsonPath("$.data.movieDetail.title").value(expectedMovie.getTitle()))
+				.andExpect(jsonPath("$.data.movieDetail.director").value(expectedMovie.getDirector()))
+				.andExpect(jsonPath("$.data.movieDetail.actors").value(expectedMovie.getActors()))
+				.andExpect(jsonPath("$.data.movieDetail.releaseYear").value(expectedMovie.getReleaseYear()))
+				.andExpect(jsonPath("$.data.movieDetail.description").value(expectedMovie.getDescription()))
+				.andExpect(jsonPath("$.data.movieDetail.rating").value(4.0))
+				.andExpect(jsonPath("$.data.movieDetail.reviews.length()").value(2))
+				.andExpect(jsonPath("$.errorMessages").isEmpty());
+		verify(service).addMovieReview(Mockito.anyString(), Mockito.any(Review.class));
+	}
+	
+	@Test
+	public void testAddMovieDetails_ReturnsMovieNotFound() throws Exception {
+		when(service.addMovieReview(Mockito.anyString(), Mockito.any(Review.class))).thenThrow(new MovieNotFoundException("Dummy"));
+
+		mockMvc.perform(post("/api/movies/{title}/review", "Dummy").content(TestHelper.reviewContent())
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.data").isEmpty())
+				.andExpect(jsonPath("$.errorMessages.length()").value(1))
+				.andExpect(jsonPath("$.errorMessages[0]").value("Movie - {Dummy} not found"));
+
+		verify(service).addMovieReview(Mockito.anyString(), Mockito.any(Review.class));
+	}
+
 }

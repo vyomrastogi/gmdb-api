@@ -1,6 +1,10 @@
 package com.gmdb.controller;
 
 import com.gmdb.exception.MovieNotFoundException;
+
+import javax.validation.Valid;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +18,7 @@ import com.gmdb.service.GmdbService;
 
 @RestController
 @RequestMapping("/api")
+@Validated
 public class GmdbController {
 
 	GmdbService service;
@@ -33,7 +38,7 @@ public class GmdbController {
 	}
 	
 	@PostMapping("/movies/{title}/review")
-	public GmdbBaseResponse addReview(@PathVariable String title, @RequestBody Review review) throws MovieNotFoundException {
+	public GmdbBaseResponse addReview(@PathVariable String title, @Valid @RequestBody Review review) throws MovieNotFoundException {
 		return new GmdbBaseResponse(service.addMovieReview(title,review));
 	}
 }
