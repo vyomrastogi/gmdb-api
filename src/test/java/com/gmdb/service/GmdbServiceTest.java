@@ -1,30 +1,26 @@
 package com.gmdb.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.gmdb.exception.MovieNotFoundException;
+import com.gmdb.model.Movie;
+import com.gmdb.model.MovieReview;
+import com.gmdb.repository.GmdbRepository;
+import com.gmdb.repository.GmdbReviewRepository;
+import com.gmdb.response.MovieDetailResponse;
+import com.gmdb.response.MovieTitlesResponse;
+import com.gmdb.response.Review;
+import com.gmdb.util.TestHelper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.gmdb.exception.MovieNotFoundException;
-import com.gmdb.response.MovieDetail;
-import com.gmdb.response.MovieDetailResponse;
-import com.gmdb.util.TestHelper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import com.gmdb.model.Movie;
-import com.gmdb.model.MovieReview;
-import com.gmdb.repository.GmdbRepository;
-import com.gmdb.repository.GmdbReviewRepository;
-import com.gmdb.response.MovieTitlesResponse;
-import com.gmdb.response.Review;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class GmdbServiceTest {
 
